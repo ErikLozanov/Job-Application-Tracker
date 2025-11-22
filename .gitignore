@@ -10,7 +10,17 @@
 *.userosscache
 *.sln.docstates
 *.env
+# Node
+node_modules/
+dist/
+.env
+.env.local
 
+# Mac
+.DS_Store
+
+# VSCode
+.vscode/
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
