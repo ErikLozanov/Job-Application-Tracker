@@ -1,0 +1,59 @@
+// /server/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Model
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+
+  // This creates the relationship:
+  // A User can have many Jobs
+  jobs      Job[]
+}
+
+// Job Model
+model Job {
+  id            Int       @id @default(autoincrement())
+  company       String
+  jobTitle      String
+  jobUrl        String? // ? makes it optional
+  status        JobStatus @default(APPLIED)
+  priority      Priority  @default(MEDIUM)
+  appliedDate   DateTime?
+  interviewDate DateTime?
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // This creates the relationship:
+  // This Job belongs to one User
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  // This is the foreign key
+
+  @@index([userId]) // Adds an index to userId for faster lookups
+}
+
+// Enums for dropdowns
+enum JobStatus {
+  APPLIED
+  INTERVIEW
+  OFFER
+  REJECTED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
