@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useJob, useDeleteJob, useUpdateJob } from '../../hooks/useJobs';
+import { useJob, useDeleteJob, useUpdateJob, useGenerateCoverLetter } from '../../hooks/useJobs';
 
 const JobDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -9,8 +9,11 @@ const JobDetails = () => {
   const { data: job, isLoading, isError } = useJob(id || '');
   const { mutate: removeJob, isPending: isDeleting } = useDeleteJob();
   const { mutate: saveJob, isPending: isSaving } = useUpdateJob();
+  const { mutate: generateAI, isPending: isGenerating } = useGenerateCoverLetter();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [generatedLetter, setGeneratedLetter] = useState('');
+  
   const [formData, setFormData] = useState({
     company: '',
     jobTitle: '',
@@ -21,6 +24,7 @@ const JobDetails = () => {
     notes: '',
   });
 
+  // 3. Sync form data when job loads
   useEffect(() => {
     if (job) {
       setFormData({
@@ -35,6 +39,7 @@ const JobDetails = () => {
     }
   }, [job]);
 
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -44,7 +49,7 @@ const JobDetails = () => {
       { id: id!, data: formData },
       {
         onSuccess: () => {
-          setIsEditing(false); 
+          setIsEditing(false);
         },
       }
     );
@@ -56,11 +61,19 @@ const JobDetails = () => {
     }
   };
 
+  const handleGenerateAI = () => {
+    generateAI(id!, {
+      onSuccess: (data) => {
+        setGeneratedLetter(data.coverLetter);
+      }
+    });
+  };
+
   if (isLoading) return <div className="text-center mt-10">Loading job details...</div>;
   if (isError || !job) return <div className="text-center mt-10 text-red-500">Job not found.</div>;
 
   return (
-    <div className="max-w-3xl mx-auto bg-white shadow overflow-hidden sm:rounded-lg">
+    <div className="max-w-3xl mx-auto bg-white shadow overflow-hidden sm:rounded-lg mb-10">
       
       <div className="px-4 py-5 sm:px-6 flex justify-between items-center bg-gray-50 border-b border-gray-200">
         <div className="flex-1">
@@ -132,6 +145,51 @@ const JobDetails = () => {
             </>
           )}
         </div>
+      </div>
+
+      <div className="p-4 bg-indigo-50 border-b border-indigo-100">
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="text-sm font-bold text-indigo-900 flex items-center gap-2">
+            ✨ AI Assistant
+          </h4>
+          {!generatedLetter && (
+            <button
+              onClick={handleGenerateAI}
+              disabled={isGenerating}
+              className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 disabled:opacity-50"
+            >
+              {isGenerating ? 'Writing with Gemini...' : 'Generate Cover Letter'}
+            </button>
+          )}
+        </div>
+
+        {generatedLetter && (
+          <div className="mt-3 bg-white p-4 rounded border border-indigo-200 shadow-sm">
+            <h5 className="text-xs font-bold text-gray-500 uppercase mb-2">Generated Draft</h5>
+            <textarea
+              readOnly
+              className="w-full h-48 text-sm text-gray-700 border-none focus:ring-0 resize-none p-2 bg-gray-50 rounded"
+              value={generatedLetter}
+            />
+            <div className="mt-2 flex justify-end gap-2">
+              <button
+                onClick={() => setGeneratedLetter('')}
+                className="text-xs text-gray-500 hover:text-gray-700 underline"
+              >
+                Discard
+              </button>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(generatedLetter);
+                  alert('Copied to clipboard!');
+                }}
+                className="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200"
+              >
+                Copy to Clipboard
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="px-4 py-5 sm:p-0">
@@ -215,7 +273,7 @@ const JobDetails = () => {
               ) : (
                 job.jobUrl ? (
                   <a href={job.jobUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                    {job.jobUrl.slice(0, 50)}{job.jobUrl.length > 50 ? '...' : ''}
+                    {job.jobUrl}
                   </a>
                 ) : 'N/A'
               )}

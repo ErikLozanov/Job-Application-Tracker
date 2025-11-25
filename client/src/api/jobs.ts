@@ -54,3 +54,8 @@ export const deleteJob = async (id: string) => {
     const { data } = await apiClient.delete<{ message: string }>(`/jobs/${id}`);
     return data;
 };
+
+export const generateCoverLetter = async (jobId: string) => {
+  const { data } = await apiClient.post<{ coverLetter: string }>('/ai/cover-letter', { jobId });
+  return data;
+};

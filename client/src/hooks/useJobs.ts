@@ -9,6 +9,7 @@ import {
     type UpdateJobData,
     deleteJob,
     type JobFilters,
+    generateCoverLetter,
 } from "../api/jobs";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -85,5 +86,15 @@ export const useDeleteJob = () => {
             navigate("/jobs");
         },
     });
+};
+
+export const useGenerateCoverLetter = () => {
+  return useMutation({
+    mutationFn: (jobId: string) => generateCoverLetter(jobId),
+    onError: (error) => {
+      console.error("AI Error:", error);
+      alert("Failed to generate cover letter. Check your console.");
+    }
+  });
 };
 
