@@ -18,6 +18,9 @@ export interface Job {
     priority: "LOW" | "MEDIUM" | "HIGH";
     appliedDate?: string;
     notes?: string;
+    jobUrl?: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface JobStats {

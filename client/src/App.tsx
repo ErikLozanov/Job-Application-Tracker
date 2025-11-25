@@ -3,10 +3,9 @@ import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Dashboard from './pages/Dashboard/Dashboard';
 import MainLayout from './components/Layout/MainLayout'; 
-
-const JobsList = () => <div>Jobs List Page (Coming Soon)</div>;
-const AddJob = () => <div>Add Job Page (Coming Soon)</div>;
-const JobDetails = () => <div>Job Details Page (Coming Soon)</div>;
+import AddJob from './pages/AddJob/Addjob'; 
+import JobsList from './pages/JobsList/JobsList'; 
+import JobDetails from './pages/JobDetails/JobDetails';
 
 function App() {
   return (

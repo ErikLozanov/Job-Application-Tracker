@@ -2,14 +2,30 @@
 import prisma from '../config/prisma.js';
 
 export const getAllJobs = async (req, res) => {
+  const { limit, search, status } = req.query;
+
+  const whereClause = {
+    userId: req.user.id, 
+  };
+
+  if (status && status !== 'ALL') {
+    whereClause.status = status;
+  }
+
+  if (search) {
+    whereClause.OR = [
+      { company: { contains: search, mode: 'insensitive' } }, 
+      { jobTitle: { contains: search, mode: 'insensitive' } },
+    ];
+  }
+
   try {
     const jobs = await prisma.job.findMany({
-      where: {
-        userId: req.user.id, 
-      },
+      where: whereClause,
       orderBy: {
-        createdAt: 'desc',
+        updatedAt: 'desc', 
       },
+      take: limit ? parseInt(limit) : undefined, 
     });
     res.json(jobs);
   } catch (error) {
