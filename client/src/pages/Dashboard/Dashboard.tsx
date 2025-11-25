@@ -1,18 +1,35 @@
 import { useJobStats, useJobs } from '../../hooks/useJobs';
 import { Link } from 'react-router-dom';
 
-const StatCard = ({ title, count, color }: { title: string; count: number; color: string }) => (
-  <div className={`bg-white overflow-hidden shadow rounded-lg border-l-4 ${color}`}>
-    <div className="px-4 py-5 sm:p-6">
-      <dt className="text-sm font-medium text-gray-500 truncate uppercase tracking-wider">
+const StatCard = ({ title, count, color }: { title: string; count: number; color: string }) => {
+  const bgGradients: Record<string, string> = {
+    'border-gray-500': 'from-gray-50 to-gray-100 text-gray-600',
+    'border-yellow-500': 'from-orange-50 to-amber-100 text-amber-600',
+    'border-green-500': 'from-emerald-50 to-teal-100 text-emerald-600',
+    'border-red-500': 'from-rose-50 to-pink-100 text-rose-600',
+  };
+
+  const gradientClass = bgGradients[color] || 'from-white to-gray-50';
+
+  return (
+    <div className={`
+      relative overflow-hidden rounded-2xl p-6 
+      bg-gradient-to-br ${gradientClass}
+      border border-white/50 shadow-lg shadow-gray-200/50
+      transition-all duration-300 ease-in-out
+      hover:-translate-y-1 hover:shadow-xl
+    `}>
+      <dt className="text-xs font-bold uppercase tracking-widest opacity-70 mb-2">
         {title}
       </dt>
-      <dd className="mt-1 text-3xl font-semibold text-gray-900">
+      <dd className="text-4xl font-extrabold tracking-tight">
         {count}
       </dd>
+      
+      <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/20 blur-2xl" />
     </div>
-  </div>
-);
+  );
+};
 
 const Dashboard = () => {
   const { data: stats, isLoading: statsLoading } = useJobStats();
@@ -45,8 +62,12 @@ const Dashboard = () => {
         <div className="mt-4 flex md:mt-0 md:ml-4">
           <Link
             to="/jobs/new"
-            className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
-          >
+            className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 bg-gradient-to-r from-blue-600 to-indigo-600 
+  rounded-full shadow-lg shadow-blue-500/30 
+  hover:from-blue-700 hover:to-indigo-700 
+  hover:shadow-blue-500/50 hover:-translate-y-0.5
+  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+">
             + Add New Job
           </Link>
         </div>
