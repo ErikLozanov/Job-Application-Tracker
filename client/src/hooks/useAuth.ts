@@ -12,15 +12,11 @@ export const useRegister = () => {
     onSuccess: (data) => {
       // 1. Save the token to localStorage
       localStorage.setItem('token', data.token);
-      
-      // 2. Ideally, save the user info to a global Context or Store (we'll skip this for MVP)
-      console.log('Registered successfully:', data);
 
       // 3. Redirect to the Dashboard
-      navigate('/');
+      navigate('/dashboard');
     },
     onError: (error) => {
-      // This helps debug connection issues
       if (axios.isAxiosError(error)) {
         console.error("Axios Error:", error.response?.data?.message || error.message);
       } else {
@@ -37,12 +33,8 @@ export const useLogin = () => {
     mutationFn: loginUser,
     onSuccess: (data) => {
       localStorage.setItem('token', data.token);
-      
-      // 2. Log success
-      console.log('Login successful, token saved!');
 
-      // 3. Redirect to Dashboard
-      navigate('/');
+      navigate('/dashboard');
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
