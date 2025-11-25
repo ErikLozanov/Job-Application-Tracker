@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+  color: #1a202c;
+  min-height: 100vh;
+}
+html {
+  scroll-behavior: smooth;
+}
