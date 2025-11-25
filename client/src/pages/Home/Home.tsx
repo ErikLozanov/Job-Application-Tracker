@@ -61,12 +61,6 @@ const Home = () => {
           >
             Get Started for Free
           </Link>
-          <Link
-            to="/login"
-            className="px-8 py-4 rounded-full text-gray-700 font-bold text-lg bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm"
-          >
-            View Demo
-          </Link>
         </div>
 
         <div className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-5xl w-full text-left">
