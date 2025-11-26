@@ -20,6 +20,10 @@ router.route("/").get(getAllJobs).post(upload.single("resume"), createJob);
 // This route is for the dashboard stats
 router.route("/stats").get(getJobStats);
 
-router.route("/:id").get(getJobById).put(updateJob).delete(deleteJob);
+router
+  .route('/:id')
+  .get(getJobById)
+  .put(upload.single('resume'), updateJob)
+  .delete(deleteJob);
 
 export default router;

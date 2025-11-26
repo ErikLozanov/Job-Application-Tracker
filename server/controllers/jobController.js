@@ -55,7 +55,6 @@ export const getJobById = async (req, res) => {
 };
 
 export const createJob = async (req, res) => {
-  // Extract text fields
   const {
     company,
     jobTitle,
@@ -116,6 +115,7 @@ export const createJob = async (req, res) => {
 
 export const updateJob = async (req, res) => {
   const { id } = req.params;
+  
   const {
     company,
     jobTitle,
@@ -127,34 +127,56 @@ export const updateJob = async (req, res) => {
     notes,
   } = req.body;
 
+  let updateData = {
+    company,
+    jobTitle,
+    jobUrl,
+    status,
+    priority,
+    appliedDate: appliedDate ? new Date(appliedDate) : null,
+    interviewDate: interviewDate ? new Date(interviewDate) : null,
+    notes,
+  };
+
+  if (req.file) {
+    try {
+      const fileName = `${req.user.id}/${Date.now()}_${req.file.originalname}`;
+
+      const { error } = await supabase.storage
+        .from('resumes')
+        .upload(fileName, req.file.buffer, {
+          contentType: req.file.mimetype,
+        });
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from('resumes')
+        .getPublicUrl(fileName);
+
+      updateData.resumeUrl = urlData.publicUrl;
+      updateData.resumeName = req.file.originalname;
+
+    } catch (uploadError) {
+      console.error('Update Upload Error:', uploadError);
+      return res.status(500).json({ message: "File update failed" });
+    }
+  }
+
   try {
     const job = await prisma.job.findFirst({
-      where: {
-        id: parseInt(id),
-        userId: req.user.id,
-      },
+      where: { id: parseInt(id), userId: req.user.id },
     });
 
     if (!job) {
       return res.status(404).json({ message: 'Job not found' });
     }
 
-    // If it exists and belongs to them, update it
     const updatedJob = await prisma.job.update({
-      where: {
-        id: parseInt(id),
-      },
-      data: {
-        company,
-        jobTitle,
-        jobUrl,
-        status,
-        priority,
-        appliedDate: appliedDate ? new Date(appliedDate) : null,
-        interviewDate: interviewDate ? new Date(interviewDate) : null,
-        notes,
-      },
+      where: { id: parseInt(id) },
+      data: updateData,
     });
+    
     res.json(updatedJob);
   } catch (error) {
     res.status(400).json({ message: error.message });

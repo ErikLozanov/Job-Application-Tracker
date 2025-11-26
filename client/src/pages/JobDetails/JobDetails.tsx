@@ -27,6 +27,7 @@ const JobDetails = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [generatedLetter, setGeneratedLetter] = useState('');
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   
   const [formData, setFormData] = useState({
     company: '',
@@ -56,8 +57,32 @@ const JobDetails = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setResumeFile(e.target.files[0]);
+    }
+  };
+
   const handleSave = () => {
-    saveJob({ id: id!, data: formData }, { onSuccess: () => setIsEditing(false) });
+    const data = new FormData();
+    data.append('company', formData.company);
+    data.append('jobTitle', formData.jobTitle);
+    data.append('status', formData.status);
+    data.append('priority', formData.priority);
+    data.append('jobUrl', formData.jobUrl);
+    data.append('appliedDate', formData.appliedDate);
+    data.append('notes', formData.notes);
+    
+    if (resumeFile) {
+      data.append('resume', resumeFile);
+    }
+
+    saveJob({ id: id!, data }, { 
+      onSuccess: () => {
+        setIsEditing(false);
+        setResumeFile(null); 
+      } 
+    });
   };
 
   const handleDelete = () => {
@@ -78,6 +103,7 @@ const JobDetails = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-20">
       
+      {/* --- Header Card --- */}
       <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/50 p-6 sm:p-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-100/50 to-purple-100/50 rounded-full blur-3xl -z-10" />
 
@@ -87,20 +113,11 @@ const JobDetails = () => {
               <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-blue-500/30">
                 {job.company.charAt(0).toUpperCase()}
               </div>
-              
               <div>
                 {isEditing ? (
                   <div className="space-y-2">
-                    <input
-                      type="text" name="company" value={formData.company} onChange={handleChange}
-                      className="block w-full text-2xl font-bold text-gray-900 bg-transparent border-b border-gray-300 focus:border-blue-500 focus:ring-0 px-0 placeholder-gray-400"
-                      placeholder="Company"
-                    />
-                    <input
-                      type="text" name="jobTitle" value={formData.jobTitle} onChange={handleChange}
-                      className="block w-full text-lg text-gray-600 bg-transparent border-b border-gray-300 focus:border-blue-500 focus:ring-0 px-0 placeholder-gray-400"
-                      placeholder="Job Title"
-                    />
+                    <input type="text" name="company" value={formData.company} onChange={handleChange} className="block w-full text-2xl font-bold text-gray-900 bg-transparent border-b border-gray-300 focus:border-blue-500 focus:ring-0 px-0 placeholder-gray-400" placeholder="Company" />
+                    <input type="text" name="jobTitle" value={formData.jobTitle} onChange={handleChange} className="block w-full text-lg text-gray-600 bg-transparent border-b border-gray-300 focus:border-blue-500 focus:ring-0 px-0 placeholder-gray-400" placeholder="Job Title" />
                   </div>
                 ) : (
                   <>
@@ -110,13 +127,10 @@ const JobDetails = () => {
                 )}
               </div>
             </div>
-
             {!isEditing && (
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <StatusBadge status={job.status} />
-                <span className={`px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-gray-100 text-gray-600 border border-gray-200`}>
-                  {job.priority} Priority
-                </span>
+                <span className={`px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-gray-100 text-gray-600 border border-gray-200`}>{job.priority} Priority</span>
                 <span className="text-sm text-gray-400 flex items-center">
                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                   Applied {new Date(job.appliedDate || Date.now()).toLocaleDateString()}
@@ -128,24 +142,14 @@ const JobDetails = () => {
           <div className="flex flex-wrap gap-3">
             {isEditing ? (
               <>
-                <button onClick={() => setIsEditing(false)} className="px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors">
-                  Cancel
-                </button>
-                <button onClick={handleSave} disabled={isSaving} className="px-6 py-2 rounded-xl bg-blue-600 text-white font-bold shadow-lg shadow-blue-500/30 hover:bg-blue-700 hover:-translate-y-0.5 transition-all disabled:opacity-50">
-                  {isSaving ? 'Saving...' : 'Save Changes'}
-                </button>
+                <button onClick={() => setIsEditing(false)} className="px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors">Cancel</button>
+                <button onClick={handleSave} disabled={isSaving} className="px-6 py-2 rounded-xl bg-blue-600 text-white font-bold shadow-lg shadow-blue-500/30 hover:bg-blue-700 hover:-translate-y-0.5 transition-all disabled:opacity-50">{isSaving ? 'Saving...' : 'Save Changes'}</button>
               </>
             ) : (
               <>
-                <button onClick={() => navigate('/jobs')} className="px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors">
-                  Back
-                </button>
-                <button onClick={() => setIsEditing(true)} className="px-4 py-2 rounded-xl bg-blue-50 text-blue-700 font-bold hover:bg-blue-100 transition-colors border border-blue-100">
-                  Edit
-                </button>
-                <button onClick={handleDelete} disabled={isDeleting} className="px-4 py-2 rounded-xl bg-red-50 text-red-700 font-bold hover:bg-red-100 transition-colors border border-red-100">
-                  {isDeleting ? 'Deleting...' : 'Delete'}
-                </button>
+                <button onClick={() => navigate('/jobs')} className="px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors">Back</button>
+                <button onClick={() => setIsEditing(true)} className="px-4 py-2 rounded-xl bg-blue-50 text-blue-700 font-bold hover:bg-blue-100 transition-colors border border-blue-100">Edit</button>
+                <button onClick={handleDelete} disabled={isDeleting} className="px-4 py-2 rounded-xl bg-red-50 text-red-700 font-bold hover:bg-red-100 transition-colors border border-red-100">{isDeleting ? 'Deleting...' : 'Delete'}</button>
               </>
             )}
           </div>
@@ -155,10 +159,9 @@ const JobDetails = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <div className="lg:col-span-2 space-y-6">
-          
           {isEditing && (
             <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/50 p-6 space-y-4">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Application Details</h3>
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Update Details</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
@@ -186,17 +189,25 @@ const JobDetails = () => {
                   <input type="date" name="appliedDate" value={formData.appliedDate} onChange={handleChange} className="block w-full rounded-lg border-gray-300 bg-gray-50 p-2.5 text-sm focus:ring-blue-500 focus:border-blue-500" />
                 </div>
               </div>
+              
+              <div className="pt-2 border-t border-gray-100">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Update Resume</label>
+                <div className="flex items-center gap-3">
+                  <label className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    <svg className="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    Choose File
+                    <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} className="hidden" />
+                  </label>
+                  <span className="text-sm text-gray-500 italic">{resumeFile ? resumeFile.name : (job.resumeName ? `Current: ${job.resumeName}` : 'No file selected')}</span>
+                </div>
+              </div>
             </div>
           )}
 
           <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/50 p-6 h-full">
             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Notes & Strategy</h3>
             {isEditing ? (
-              <textarea
-                name="notes" rows={8} value={formData.notes} onChange={handleChange}
-                className="block w-full rounded-lg border-gray-300 bg-gray-50 p-4 text-sm leading-relaxed shadow-inner focus:ring-blue-500 focus:border-blue-500 resize-none"
-                placeholder="Add details about the role, interview questions, or key requirements..."
-              />
+              <textarea name="notes" rows={8} value={formData.notes} onChange={handleChange} className="block w-full rounded-lg border-gray-300 bg-gray-50 p-4 text-sm leading-relaxed shadow-inner focus:ring-blue-500 focus:border-blue-500 resize-none" placeholder="Add notes..." />
             ) : (
               <div className="prose prose-sm max-w-none text-gray-600 whitespace-pre-wrap leading-relaxed bg-gray-50/50 p-4 rounded-xl border border-gray-100 min-h-[10rem]">
                 {job.notes || <span className="text-gray-400 italic">No notes added yet.</span>}
@@ -206,86 +217,71 @@ const JobDetails = () => {
         </div>
 
         <div className="space-y-6">
-          
           {!isEditing && job.jobUrl && (
-            <a href={job.jobUrl} target="_blank" rel="noopener noreferrer" 
-               className="block w-full text-center py-3 px-4 rounded-xl bg-white border border-gray-200 text-blue-600 font-bold hover:bg-blue-50 hover:border-blue-200 transition-all shadow-sm">
-              Open Job Posting ↗
-            </a>
+            <a href={job.jobUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-3 px-4 rounded-xl bg-white border border-gray-200 text-blue-600 font-bold hover:bg-blue-50 hover:border-blue-200 transition-all shadow-sm">Open Job Posting ↗</a>
           )}
-          {job.resumeUrl && (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-red-50 rounded-lg">
-                    <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+
+          {!isEditing && (
+            job.resumeUrl ? (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 bg-red-50 rounded-lg">
+                      <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-gray-900">Attached Resume</h3>
+                      <p className="text-xs text-gray-500 truncate max-w-[150px]" title={job.resumeName || 'Resume.pdf'}>{job.resumeName || 'Resume.pdf'}</p>
+                    </div>
+                  </div>
+                </div>
+                <a href={job.resumeUrl} target="_blank" rel="noopener noreferrer" className="mt-4 flex items-center justify-center w-full py-2.5 text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl transition-colors">View Document</a>
+              </div>
+            ) : (
+              <div className="bg-amber-50 rounded-2xl shadow-sm border border-amber-200 p-6 relative overflow-hidden">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-amber-100 rounded-lg">
+                    <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-gray-900">Attached Resume</h3>
-                    <p className="text-xs text-gray-500 truncate max-w-[150px]" title={job.resumeName || 'Resume.pdf'}>
-                      {job.resumeName || 'Resume.pdf'}
+                    <h3 className="text-sm font-bold text-amber-800">Resume Missing</h3>
+                    <p className="text-xs text-amber-700 mt-1">
+                      For better AI results, attach the resume you used for this application.
                     </p>
                   </div>
                 </div>
+                <button onClick={() => setIsEditing(true)} className="mt-4 w-full py-2 text-xs font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 rounded-lg transition-colors">
+                  Upload Resume
+                </button>
               </div>
-              
-              <a 
-                href={job.resumeUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="mt-4 flex items-center justify-center w-full py-2.5 text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl transition-colors"
-              >
-                View Document
-              </a>
-            </div>
+            )
           )}
+
           <div className="bg-gradient-to-b from-indigo-50 to-white rounded-2xl shadow-sm border border-indigo-100 p-6 overflow-hidden relative">
             <div className="absolute top-0 right-0 w-20 h-20 bg-indigo-200 rounded-full blur-2xl opacity-50 -z-10"/>
-            
             <div className="flex items-center gap-2 mb-4">
               <span className="text-2xl">✨</span>
               <h3 className="text-lg font-bold text-indigo-900">AI Assistant</h3>
             </div>
-            
             <p className="text-sm text-indigo-600/80 mb-6 leading-relaxed">
-              Need a cover letter? Our AI can write a tailored draft based on your notes and job details instantly.
+              {job.resumeUrl ? "AI will use your attached resume and notes to create a tailored cover letter." : "Add a resume for a more personalized cover letter result."}
             </p>
-
             {!generatedLetter ? (
-              <button
-                onClick={handleGenerateAI}
-                disabled={isGenerating}
-                className="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all disabled:opacity-50"
-              >
+              <button onClick={handleGenerateAI} disabled={isGenerating} className="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all disabled:opacity-50">
                 {isGenerating ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    Writing Magic...
-                  </span>
+                  <span className="flex items-center justify-center gap-2"><svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Writing Magic...</span>
                 ) : 'Generate Cover Letter'}
               </button>
             ) : (
               <div className="space-y-3 animate-fade-in">
-                <textarea
-                  readOnly
-                  className="w-full h-64 text-xs text-gray-600 bg-white border border-indigo-100 rounded-lg p-3 resize-none focus:outline-none"
-                  value={generatedLetter}
-                />
+                <textarea readOnly className="w-full h-64 text-xs text-gray-600 bg-white border border-indigo-100 rounded-lg p-3 resize-none focus:outline-none" value={generatedLetter} />
                 <div className="flex gap-2">
-                  <button onClick={() => setGeneratedLetter('')} className="flex-1 py-2 text-xs font-bold text-gray-500 hover:text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
-                    Discard
-                  </button>
-                  <button 
-                    onClick={() => { navigator.clipboard.writeText(generatedLetter); alert('Copied!'); }} 
-                    className="flex-1 py-2 text-xs font-bold text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 border border-indigo-100"
-                  >
-                    Copy
-                  </button>
+                  <button onClick={() => setGeneratedLetter('')} className="flex-1 py-2 text-xs font-bold text-gray-500 hover:text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Discard</button>
+                  <button onClick={() => { navigator.clipboard.writeText(generatedLetter); alert('Copied!'); }} className="flex-1 py-2 text-xs font-bold text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 border border-indigo-100">Copy</button>
                 </div>
               </div>
             )}
           </div>
-
         </div>
       </div>
     </div>
