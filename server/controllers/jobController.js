@@ -1,5 +1,6 @@
 
 import prisma from '../config/prisma.js';
+import supabase from '../config/supabase.js';
 
 export const getAllJobs = async (req, res) => {
   const { limit, search, status } = req.query;
@@ -54,6 +55,7 @@ export const getJobById = async (req, res) => {
 };
 
 export const createJob = async (req, res) => {
+  // Extract text fields
   const {
     company,
     jobTitle,
@@ -64,16 +66,45 @@ export const createJob = async (req, res) => {
     notes,
   } = req.body;
 
+  let resumeUrl = null;
+  let resumeName = null;
+
+  if (req.file) {
+    try {
+      const fileName = `${req.user.id}/${Date.now()}_${req.file.originalname}`;
+
+      const { data, error } = await supabase.storage
+        .from('resumes') 
+        .upload(fileName, req.file.buffer, {
+          contentType: req.file.mimetype,
+        });
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from('resumes')
+        .getPublicUrl(fileName);
+
+      resumeUrl = urlData.publicUrl;
+      resumeName = req.file.originalname;
+
+    } catch (uploadError) {
+      console.error('Upload Error:', uploadError);
+    }
+  }
+
   try {
     const newJob = await prisma.job.create({
       data: {
         company,
         jobTitle,
         jobUrl,
-        status, 
-        priority, 
+        status,
+        priority,
         appliedDate: appliedDate ? new Date(appliedDate) : null,
         notes,
+        resumeUrl, 
+        resumeName, 
         userId: req.user.id,
       },
     });

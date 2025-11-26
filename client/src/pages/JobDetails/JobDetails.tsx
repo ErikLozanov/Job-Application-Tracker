@@ -213,7 +213,32 @@ const JobDetails = () => {
               Open Job Posting ↗
             </a>
           )}
-
+          {job.resumeUrl && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-red-50 rounded-lg">
+                    <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900">Attached Resume</h3>
+                    <p className="text-xs text-gray-500 truncate max-w-[150px]" title={job.resumeName || 'Resume.pdf'}>
+                      {job.resumeName || 'Resume.pdf'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <a 
+                href={job.resumeUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="mt-4 flex items-center justify-center w-full py-2.5 text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl transition-colors"
+              >
+                View Document
+              </a>
+            </div>
+          )}
           <div className="bg-gradient-to-b from-indigo-50 to-white rounded-2xl shadow-sm border border-indigo-100 p-6 overflow-hidden relative">
             <div className="absolute top-0 right-0 w-20 h-20 bg-indigo-200 rounded-full blur-2xl opacity-50 -z-10"/>
             

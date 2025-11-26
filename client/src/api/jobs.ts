@@ -40,9 +40,13 @@ export const getJobStats = async () => {
     return data;
 };
 
-export const createJob = async (jobData: CreateJobData) => {
-    const { data } = await apiClient.post<Job>("/jobs", jobData);
-    return data;
+export const createJob = async (jobData: FormData) => {
+  const { data } = await apiClient.post<Job>('/jobs', jobData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return data;
 };
 
 export const updateJob = async (id: string, jobData: UpdateJobData) => {
