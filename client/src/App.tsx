@@ -7,6 +7,8 @@ import AddJob from './pages/AddJob/Addjob';
 import JobsList from './pages/JobsList/JobsList';
 import JobDetails from './pages/JobDetails/JobDetails';
 import MainLayout from './components/Layout/MainLayout';
+import ForgotPassword from './pages/Login/ForgotPassword';
+import ResetPassword from './pages/Login/ResetPassword';
 
 function App() {
   return (
@@ -15,7 +17,8 @@ function App() {
       <Route path="/" element={<Home />} /> 
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
       {/* --- PROTECTED ROUTES --- */}
       <Route element={<MainLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />

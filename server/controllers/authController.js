@@ -1,6 +1,7 @@
 import prisma from '../config/prisma.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import nodemailer from 'nodemailer';
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -76,5 +77,68 @@ export const loginUser = async (req, res) => {
   } catch (error) {
     console.error("Login Error:", error);
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    console.log("👤 User found:", user ? "YES" : "NO"); 
+    if (!user) {
+      return res.status(200).json({ message: 'If that email exists, a reset link has been sent.' });
+    }
+
+    const resetToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '15m' });
+
+    const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"JobTracker" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: 'Password Reset Request',
+      html: `
+        <h3>Reset Your Password</h3>
+        <p>Click the link below to reset your password. This link expires in 15 minutes.</p>
+        <a href="${resetLink}" style="padding: 10px 20px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 5px;">Reset Password</a>
+        <p>If you didn't request this, please ignore this email.</p>
+      `,
+    });
+
+    res.json({ message: 'Password reset email sent' });
+
+  } catch (error) {
+    console.error('Forgot Password Error:', error);
+    res.status(500).json({ message: 'Email could not be sent' });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await prisma.user.update({
+      where: { id: decoded.id },
+      data: { password: hashedPassword },
+    });
+
+    res.json({ message: 'Password updated successfully' });
+
+  } catch (error) {
+    res.status(400).json({ message: 'Invalid or expired token' });
   }
 };
