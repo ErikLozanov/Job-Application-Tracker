@@ -150,3 +150,71 @@ export const resetPassword = async (req, res) => {
         res.status(400).json({ message: "Invalid or expired token" });
     }
 };
+
+export const updateProfile = async (req, res) => {
+  const { password } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const updateData = {};
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      updateData.password = await bcrypt.hash(password, salt);
+    }
+
+    // Only run update if there is data to update
+    if (Object.keys(updateData).length === 0) {
+       return res.status(400).json({ message: 'No changes provided' });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+      select: { id: true, email: true }, // Removed 'name'
+    });
+
+    res.json({
+      ...updatedUser,
+      token: generateToken(updatedUser.id),
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Update failed' });
+  }
+};
+export const deleteAccount = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+
+    await prisma.job.deleteMany({ where: { userId } });
+
+    await prisma.user.delete({ where: { id: userId } });
+
+    res.json({ message: 'Account deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Delete failed' });
+  }
+};
+
+export const getUserProfile = async (req, res) => {
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.id },
+    select: { id: true, name: true, email: true }, 
+  });
+
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+};

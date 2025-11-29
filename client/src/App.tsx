@@ -9,6 +9,7 @@ import JobDetails from './pages/JobDetails/JobDetails';
 import MainLayout from './components/Layout/MainLayout';
 import ForgotPassword from './pages/Login/ForgotPassword';
 import ResetPassword from './pages/Login/ResetPassword';
+import Settings from './pages/Settings/Settings';
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
       {/* --- PROTECTED ROUTES --- */}
       <Route element={<MainLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
-        
+        <Route path="/settings" element={<Settings />} />
         <Route path="/jobs" element={<JobsList />} />
         <Route path="/jobs/new" element={<AddJob />} />
         <Route path="/jobs/:id" element={<JobDetails />} />

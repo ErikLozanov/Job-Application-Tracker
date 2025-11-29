@@ -17,6 +17,7 @@ const MainLayout = () => {
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'All Jobs', path: '/jobs' },
     { name: 'Add Job', path: '/jobs/new' },
+    { name: 'Settings', path: '/settings' },
   ];
 
   return (

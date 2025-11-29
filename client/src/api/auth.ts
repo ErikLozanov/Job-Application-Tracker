@@ -20,3 +20,18 @@ export const resetPassword = async (token: string, newPassword: string) => {
   const { data } = await apiClient.post<{ message: string }>('/auth/reset-password', { token, newPassword });
   return data;
 };
+
+export const updateProfile = async (userData: { password?: string }) => {
+  const { data } = await apiClient.put<User>('/auth/profile', userData);
+  return data;
+};
+
+export const deleteAccount = async () => {
+  const { data } = await apiClient.delete<{ message: string }>('/auth/profile');
+  return data;
+};
+
+export const getUser = async () => {
+  const { data } = await apiClient.get<User>('/auth/profile');
+  return data;
+};
