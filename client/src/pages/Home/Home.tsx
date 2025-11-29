@@ -40,7 +40,7 @@ const Home = () => {
         
         <div className="inline-flex items-center px-3 py-1 rounded-full border border-blue-100 bg-blue-50 text-blue-600 text-xs font-semibold uppercase tracking-wide mb-6">
           <span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
-          Now with AI Cover Letters
+          Now with AI Cover Letters and Interview Coach!
         </div>
 
         <h1 className="text-5xl sm:text-7xl font-extrabold text-gray-900 tracking-tight mb-6">

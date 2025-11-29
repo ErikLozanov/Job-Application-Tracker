@@ -89,3 +89,54 @@ export const generateCoverLetter = async (req, res) => {
     res.status(500).json({ message: 'Failed to generate cover letter' });
   }
 };
+
+export const generateInterviewQuestions = async (req, res) => {
+  const { jobId } = req.body;
+
+  try {
+    const job = await prisma.job.findUnique({ where: { id: parseInt(jobId) } });
+    if (!job) return res.status(404).json({ message: 'Job not found' });
+
+    let resumeText = '';
+    if (job.resumeUrl) {
+      try {
+        const response = await fetch(job.resumeUrl);
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const data = await pdfParse(buffer);
+        resumeText = data.text;
+      } catch (e) {
+        console.error("Resume parse failed", e);
+      }
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+    const prompt = `
+      Act as an expert technical interviewer and career coach.
+      Generate a Interview Prep Guide for a ${job.jobTitle} position at ${job.company}.
+      
+      ${resumeText ? `Based on this candidate's resume: ${resumeText.substring(0, 3000)}` : ''}
+      
+      Job Notes: "${job.notes || ''}"
+
+      Output Format:
+      1. **3 Behavioral Questions** (tailored to the company culture if known, or standard STAR method).
+      2. **3 Technical/Role-Specific Questions** (based on the job title).
+      3. **1 "Curveball" Question** (a tricky or creative question).
+      
+      For each question, provide a short "Coach's Tip" on what the interviewer is looking for.
+      Keep the tone encouraging but professional. Use Markdown formatting.
+    `;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const interviewPrep = response.text();
+
+    res.json({ interviewPrep });
+
+  } catch (error) {
+    console.error('AI Interview Error:', error);
+    res.status(500).json({ message: 'Failed to generate interview questions' });
+  }
+};

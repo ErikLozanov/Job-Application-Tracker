@@ -10,6 +10,7 @@ import {
     deleteJob,
     type JobFilters,
     generateCoverLetter,
+    generateInterviewQuestions,
 } from "../api/jobs";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -95,3 +96,12 @@ export const useGenerateCoverLetter = () => {
   });
 };
 
+export const useGenerateInterviewQuestions = () => {
+  return useMutation({
+    mutationFn: (jobId: string) => generateInterviewQuestions(jobId),
+    onError: (error) => {
+      console.error("AI Error:", error);
+      alert("Failed to generate interview prep.");
+    }
+  });
+};

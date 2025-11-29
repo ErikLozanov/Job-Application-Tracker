@@ -67,3 +67,8 @@ export const generateCoverLetter = async (jobId: string) => {
   const { data } = await apiClient.post<{ coverLetter: string }>('/ai/cover-letter', { jobId });
   return data;
 };
+
+export const generateInterviewQuestions = async (jobId: string) => {
+  const { data } = await apiClient.post<{ interviewPrep: string }>('/ai/interview-questions', { jobId });
+  return data;
+};
