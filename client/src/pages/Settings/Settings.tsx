@@ -29,13 +29,11 @@ const Settings = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-10">
       
-      {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Settings</h1>
+         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">Settings</h1>
         <p className="mt-2 text-gray-500">Manage your account security.</p>
       </div>
 
-      {/* --- Security Card --- */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
           <h3 className="text-lg font-bold text-gray-900">Account Details</h3>
@@ -44,13 +42,12 @@ const Settings = () => {
         <div className="p-6 md:p-8">
           <form onSubmit={handleUpdate} className="space-y-6 max-w-lg">
             
-            {/* 2. Read-Only Email Field */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
               <input 
                 type="email" 
-                value={user?.email || ''} // Display the email
-                disabled // Make it unchangeable
+                value={user?.email || ''}
+                disabled
                 className="block w-full rounded-lg border-gray-200 bg-gray-100 text-gray-500 p-2.5 shadow-sm cursor-not-allowed select-none"
               />
               <p className="mt-1 text-xs text-gray-400">Email address cannot be changed.</p>

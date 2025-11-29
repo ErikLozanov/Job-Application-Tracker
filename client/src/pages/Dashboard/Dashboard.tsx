@@ -6,7 +6,7 @@ const StatCard = ({ title, count, gradient, icon }: { title: string; count: numb
   <div className={`
     relative overflow-hidden rounded-2xl p-6 
     bg-gradient-to-br ${gradient}
-    text-white shadow-lg shadow-gray-200/50
+    text-white shadow-lg shadow-gray-200/50 dark:shadow-black/30
     transition-all duration-300 ease-in-out
     hover:-translate-y-1 hover:shadow-xl group
   `}>
@@ -31,18 +31,18 @@ const StatCard = ({ title, count, gradient, icon }: { title: string; count: numb
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'APPLIED': return 'bg-blue-100 text-blue-700 border-blue-200';
-    case 'INTERVIEW': return 'bg-amber-100 text-amber-700 border-amber-200';
-    case 'OFFER': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-    case 'REJECTED': return 'bg-rose-100 text-rose-700 border-rose-200';
-    default: return 'bg-gray-100 text-gray-700 border-gray-200';
+    case 'APPLIED': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800';
+    case 'INTERVIEW': return 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800';
+    case 'OFFER': return 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
+    case 'REJECTED': return 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800';
+    default: return 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-slate-600';
   }
 };
 
 const Dashboard = () => {
   const { data: stats, isLoading: statsLoading } = useJobStats();
   const { data: recentJobs, isLoading: jobsLoading } = useJobs({ limit: 5 });
-
+  
   if (statsLoading || jobsLoading) return <div className="flex h-screen items-center justify-center text-blue-600 font-medium animate-pulse">Loading dashboard...</div>;
 
   const total = (stats?.APPLIED || 0) + (stats?.INTERVIEW || 0) + (stats?.OFFER || 0) + (stats?.REJECTED || 0);
@@ -52,10 +52,10 @@ const Dashboard = () => {
       
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">
+          <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-2">
             Overview
           </h1>
-          <p className="text-lg text-gray-500">
+          <p className="text-lg text-gray-500 dark:text-slate-400">
             Here's what's happening with your job search today.
           </p>
         </div>
@@ -78,7 +78,7 @@ const Dashboard = () => {
         <StatCard 
           title="Total" 
           count={total} 
-          gradient="from-gray-700 to-gray-900"
+          gradient="from-gray-700 to-gray-900 dark:from-slate-700 dark:to-slate-900"
           icon={<svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>}
         />
         <StatCard 
@@ -101,30 +101,30 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/50 overflow-hidden">
-        <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-white/50">
+      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-black/30 border border-white/50 dark:border-slate-700/50 overflow-hidden transition-colors duration-300">
+        <div className="px-8 py-6 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between bg-white/50 dark:bg-slate-800/50">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">Recent Activity</h2>
-            <p className="text-sm text-gray-500 mt-1">Your latest application updates.</p>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Recent Activity</h2>
+            <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Your latest application updates.</p>
           </div>
-          <Link to="/jobs" className="text-sm font-bold text-blue-600 hover:text-blue-700 hover:underline transition-all">
+          <Link to="/jobs" className="text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-all">
             View All &rarr;
           </Link>
         </div>
         
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-gray-100 dark:divide-slate-700">
           {!recentJobs || recentJobs.length === 0 ? (
             <div className="px-6 py-16 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 mb-4">
-                <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 dark:bg-slate-700 mb-4">
+                <svg className="w-8 h-8 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-900">No activity yet</h3>
-              <p className="mt-2 text-gray-500 max-w-sm mx-auto mb-6">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">No activity yet</h3>
+              <p className="mt-2 text-gray-500 dark:text-slate-400 max-w-sm mx-auto mb-6">
                 You haven't tracked any jobs yet. Add your first application to see your stats light up!
               </p>
               <Link
                 to="/jobs/new"
-                className="text-blue-600 font-bold hover:text-blue-700"
+                className="text-blue-600 dark:text-blue-400 font-bold hover:text-blue-700 dark:hover:text-blue-300"
               >
                 Add First Job
               </Link>
@@ -134,19 +134,19 @@ const Dashboard = () => {
               <Link 
                 key={job.id} 
                 to={`/jobs/${job.id}`} 
-                className="group block hover:bg-blue-50/50 transition-all duration-200"
+                className="group block hover:bg-blue-50/50 dark:hover:bg-slate-700/50 transition-all duration-200"
               >
                 <div className="px-6 py-5 sm:px-8 flex items-center justify-between">
                   <div className="flex items-center min-w-0 gap-4">
-                    <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg shadow-sm group-hover:scale-110 transition-transform duration-200">
+                    <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 border border-blue-100 dark:border-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-lg shadow-sm group-hover:scale-110 transition-transform duration-200">
                       {job.company.charAt(0).toUpperCase()}
                     </div>
                     
                     <div className="min-w-0">
-                      <p className="text-sm font-bold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                      <p className="text-sm font-bold text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                         {job.company}
                       </p>
-                      <p className="text-sm text-gray-500 truncate">
+                      <p className="text-sm text-gray-500 dark:text-slate-400 truncate">
                         {job.jobTitle}
                       </p>
                     </div>
@@ -154,8 +154,8 @@ const Dashboard = () => {
 
                   <div className="flex items-center gap-4 md:gap-8">
                     <div className="hidden md:block text-right">
-                      <p className="text-xs text-gray-400 uppercase tracking-wider font-medium">Updated</p>
-                      <p className="text-sm font-medium text-gray-600">
+                      <p className="text-xs text-gray-400 dark:text-slate-500 uppercase tracking-wider font-medium">Updated</p>
+                      <p className="text-sm font-medium text-gray-600 dark:text-slate-300">
                         {new Date(job.updatedAt || job.appliedDate || Date.now()).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                       </p>
                     </div>
@@ -169,7 +169,7 @@ const Dashboard = () => {
                       </span>
                     </div>
                     
-                    <svg className="h-5 w-5 text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-5 w-5 text-gray-300 dark:text-slate-600 group-hover:text-blue-500 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
                     </svg>
                   </div>

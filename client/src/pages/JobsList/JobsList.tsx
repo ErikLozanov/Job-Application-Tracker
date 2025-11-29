@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useJobs } from '../../hooks/useJobs';
 import { Link } from 'react-router-dom';
 
 const StatusBadge = ({ status }: { status: string }) => {
   const styles: Record<string, string> = {
-    APPLIED: 'bg-blue-50 text-blue-700 border-blue-200',
-    INTERVIEW: 'bg-amber-50 text-amber-700 border-amber-200',
-    OFFER: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    REJECTED: 'bg-rose-50 text-rose-700 border-rose-200',
+    APPLIED: 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+    INTERVIEW: 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+    OFFER: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+    REJECTED: 'bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
   };
 
-  const defaultStyle = 'bg-gray-50 text-gray-700 border-gray-200';
+  const defaultStyle = 'bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-slate-600';
 
   return (
     <span className={`
@@ -34,14 +34,13 @@ const JobsList = () => {
     return () => clearTimeout(timer);
   }, [searchText]);
 
-  // 3. Fetch Data
   const { data: jobs, isLoading, isError } = useJobs({ 
     search: debouncedSearch, 
     status: statusFilter 
   });
 
   if (isError) return (
-    <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700">
+    <div className="p-8 text-center bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl text-red-700 dark:text-red-400">
       Something went wrong loading your jobs. Please try refreshing.
     </div>
   );
@@ -51,10 +50,10 @@ const JobsList = () => {
       
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
             All Applications
           </h1>
-          <p className="mt-2 text-gray-500">
+          <p className="mt-2 text-gray-500 dark:text-slate-400">
             Manage your pipeline and track your progress.
           </p>
         </div>
@@ -73,7 +72,7 @@ const JobsList = () => {
         </Link>
       </div>
 
-      <div className="bg-white/80 backdrop-blur-xl p-1 rounded-2xl shadow-sm border border-gray-200/60">
+      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-1 rounded-2xl shadow-sm border border-gray-200/60 dark:border-slate-700/50">
         <div className="flex flex-col sm:flex-row gap-2 p-2">
           
           <div className="relative flex-1 group">
@@ -84,15 +83,16 @@ const JobsList = () => {
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-3 border-none rounded-xl bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all"
+              className="block w-full pl-10 pr-3 py-3 border-none rounded-xl bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/50 focus:bg-white dark:focus:bg-slate-900/50 transition-all"
               placeholder="Search by company or role..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
           </div>
 
-          <div className="hidden sm:block w-px bg-gray-200 my-2"></div>
+          <div className="hidden sm:block w-px bg-gray-200 dark:bg-slate-700 my-2"></div>
 
+          {/* Status Dropdown */}
           <div className="relative sm:w-48 group">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +100,7 @@ const JobsList = () => {
               </svg>
             </div>
             <select
-              className="block w-full pl-10 pr-10 py-3 border-none rounded-xl bg-transparent text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all appearance-none cursor-pointer"
+              className="block w-full pl-10 pr-10 py-3 border-none rounded-xl bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/50 focus:bg-white dark:focus:bg-slate-900/50 transition-all appearance-none cursor-pointer dark:bg-slate-800"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
@@ -117,10 +117,10 @@ const JobsList = () => {
         </div>
       </div>
 
-      <div className="bg-white/80 backdrop-blur-xl shadow-xl shadow-gray-200/40 rounded-2xl border border-white/50 overflow-hidden min-h-[300px] flex flex-col">
+      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl shadow-xl shadow-gray-200/40 dark:shadow-black/30 rounded-2xl border border-white/50 dark:border-slate-700/50 overflow-hidden min-h-[300px] flex flex-col transition-colors duration-300">
         
         {isLoading ? (
-          <div className="flex-1 flex flex-col justify-center items-center text-gray-500">
+          <div className="flex-1 flex flex-col justify-center items-center text-gray-500 dark:text-slate-400">
             <svg className="animate-spin h-10 w-10 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -129,13 +129,13 @@ const JobsList = () => {
           </div>
         ) : !jobs || jobs.length === 0 ? (
           <div className="flex-1 flex flex-col justify-center items-center py-20 px-4 text-center">
-            <div className="bg-blue-50 rounded-full p-4 mb-4">
-              <svg className="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-full p-4 mb-4">
+              <svg className="h-8 w-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900">No applications found</h3>
-            <p className="mt-1 text-gray-500 max-w-sm">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">No applications found</h3>
+            <p className="mt-1 text-gray-500 dark:text-slate-400 max-w-sm">
               {searchText || statusFilter !== 'ALL' 
                 ? "Try adjusting your search or filters to find what you're looking for."
                 : "You haven't added any jobs yet. Start your tracking journey today!"}
@@ -143,7 +143,7 @@ const JobsList = () => {
             {(searchText || statusFilter !== 'ALL') && (
               <button 
                 onClick={() => {setSearchText(''); setStatusFilter('ALL')}}
-                className="mt-4 text-sm font-medium text-blue-600 hover:text-blue-500"
+                className="mt-4 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500"
               >
                 Clear filters
               </button>
@@ -151,34 +151,34 @@ const JobsList = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-100">
+            <table className="min-w-full divide-y divide-gray-100 dark:divide-slate-700/50">
               <thead>
-                <tr className="bg-gray-50/50">
-                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Company</th>
-                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Role</th>
-                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Applied</th>
-                  <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
+                <tr className="bg-gray-50/50 dark:bg-slate-700/30">
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Company</th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Role</th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Applied</th>
+                  <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50 bg-white">
+              <tbody className="divide-y divide-gray-50 dark:divide-slate-700/50 bg-transparent">
                 {jobs.map((job) => (
-                  <tr key={job.id} className="group hover:bg-blue-50/30 transition-colors duration-150">
+                  <tr key={job.id} className="group hover:bg-blue-50/30 dark:hover:bg-slate-700/30 transition-colors duration-150">
                     
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-blue-600 font-bold text-lg">
+                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 border border-blue-100 dark:border-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-lg">
                           {job.company.charAt(0).toUpperCase()}
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-bold text-gray-900">{job.company}</div>
+                          <div className="text-sm font-bold text-gray-900 dark:text-white">{job.company}</div>
                         </div>
                       </div>
                     </td>
 
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{job.jobTitle}</div>
-                      <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">{job.jobTitle}</div>
+                      <div className="text-xs text-gray-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
                         <span className={`w-1.5 h-1.5 rounded-full ${
                           job.priority === 'HIGH' ? 'bg-red-500' : 
                           job.priority === 'MEDIUM' ? 'bg-yellow-500' : 'bg-blue-400'
@@ -191,14 +191,14 @@ const JobsList = () => {
                       <StatusBadge status={job.status} />
                     </td>
 
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400 font-medium">
                       {job.appliedDate ? new Date(job.appliedDate).toLocaleDateString(undefined, {month: 'short', day: 'numeric'}) : '-'}
                     </td>
 
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <Link 
                         to={`/jobs/${job.id}`} 
-                        className="text-gray-400 hover:text-blue-600 transition-colors group-hover:text-blue-600"
+                        className="text-gray-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400"
                       >
                         View Details &rarr;
                       </Link>

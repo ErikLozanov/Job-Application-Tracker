@@ -4,11 +4,9 @@ import { useNavigate } from 'react-router-dom';
 
 const AddJob = () => {
   const navigate = useNavigate();
-  // Note: We need to cast the mutation to accept FormData if TypeScript complains, 
-  // or ensure the hook matches the new API signature.
+
   const { mutate: createJob, isPending } = useCreateJob();
 
-  // Form State
   const [formData, setFormData] = useState({
     company: '',
     jobTitle: '',
@@ -19,7 +17,6 @@ const AddJob = () => {
     notes: '',
   });
 
-  // File State
   const [resumeFile, setResumeFile] = useState<File | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -35,7 +32,6 @@ const AddJob = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Construct FormData (Required for file uploads)
     const data = new FormData();
     data.append('company', formData.company);
     data.append('jobTitle', formData.jobTitle);
@@ -45,22 +41,19 @@ const AddJob = () => {
     data.append('appliedDate', formData.appliedDate);
     data.append('notes', formData.notes);
 
-    // 2. Append the file if it exists
     if (resumeFile) {
       data.append('resume', resumeFile);
     }
 
-    // 3. Send it! (We use 'any' here to bypass strict TS check on the hook for now)
     createJob(data as any); 
   };
 
   return (
     <div className="max-w-5xl mx-auto pb-12">
       
-      {/* --- Header --- */}
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
             New Application
           </h1>
           <p className="mt-2 text-gray-500">
@@ -77,7 +70,6 @@ const AddJob = () => {
       <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-3">
           
-          {/* --- Left Column: Guide --- */}
           <div className="bg-gradient-to-br from-gray-50 to-white p-8 border-b lg:border-b-0 lg:border-r border-gray-100">
             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600">1</span>
@@ -96,11 +88,9 @@ const AddJob = () => {
             </p>
           </div>
 
-          {/* --- Right Column: Form --- */}
           <div className="lg:col-span-2 p-8 sm:p-10">
             <form onSubmit={handleSubmit} className="space-y-6">
               
-              {/* Company & Title */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="group">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Company Name</label>
@@ -112,7 +102,6 @@ const AddJob = () => {
                 </div>
               </div>
 
-              {/* Status & Priority */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="group">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Current Status</label>
@@ -133,7 +122,6 @@ const AddJob = () => {
                 </div>
               </div>
 
-              {/* URL & Date */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="group">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Job Link</label>
@@ -145,7 +133,6 @@ const AddJob = () => {
                 </div>
               </div>
 
-              {/* --- File Upload Section --- */}
               <div className="group">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Resume (PDF)</label>
                 <div className="flex items-center gap-4">
@@ -160,13 +147,11 @@ const AddJob = () => {
                 </div>
               </div>
 
-              {/* Notes */}
               <div className="group">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
                 <textarea name="notes" rows={4} value={formData.notes} onChange={handleChange} className="block w-full rounded-lg border-gray-300 bg-gray-50 p-3 focus:bg-white focus:ring-blue-500 transition-all resize-none" placeholder="Paste keywords..." />
               </div>
 
-              {/* Submit Button */}
               <div className="pt-4 flex items-center justify-end">
                 <button type="submit" disabled={isPending} className={`inline-flex items-center justify-center px-8 py-3 text-base font-bold text-white transition-all duration-200 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full shadow-lg shadow-blue-500/30 hover:from-blue-700 hover:to-indigo-700 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${isPending ? 'opacity-70 cursor-not-allowed' : ''}`}>
                   {isPending ? 'Saving...' : 'Add Application'}
