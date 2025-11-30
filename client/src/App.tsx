@@ -10,6 +10,7 @@ import MainLayout from './components/Layout/MainLayout';
 import ForgotPassword from './pages/Login/ForgotPassword';
 import ResetPassword from './pages/Login/ResetPassword';
 import Settings from './pages/Settings/Settings';
+import Stats from './pages/Stats/Stats';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/jobs" element={<JobsList />} />
         <Route path="/jobs/new" element={<AddJob />} />
         <Route path="/jobs/:id" element={<JobDetails />} />
+        <Route path="/stats" element={<Stats />} />
       </Route>
     </Routes>
   );
