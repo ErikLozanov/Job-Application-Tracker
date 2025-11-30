@@ -72,3 +72,8 @@ export const generateInterviewQuestions = async (jobId: string) => {
   const { data } = await apiClient.post<{ interviewPrep: string }>('/ai/interview-questions', { jobId });
   return data;
 };
+
+export const analyzeResume = async (jobId: string) => {
+  const { data } = await apiClient.post<{ analysis: string }>('/ai/analyze-resume', { jobId });
+  return data;
+};

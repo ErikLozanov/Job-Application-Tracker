@@ -140,3 +140,58 @@ export const generateInterviewQuestions = async (req, res) => {
     res.status(500).json({ message: 'Failed to generate interview questions' });
   }
 };
+
+export const analyzeResume = async (req, res) => {
+  const { jobId } = req.body;
+
+  try {
+    const job = await prisma.job.findUnique({ where: { id: parseInt(jobId) } });
+    if (!job) return res.status(404).json({ message: 'Job not found' });
+
+    if (!job.resumeUrl) {
+      return res.status(400).json({ message: 'Please upload a resume first.' });
+    }
+    if (!job.jobDescription) {
+      return res.status(400).json({ message: 'Please add the Job Description text.' });
+    }
+
+    let resumeText = '';
+    try {
+      const response = await fetch(job.resumeUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      const data = await pdfParse(Buffer.from(arrayBuffer));
+      resumeText = data.text;
+    } catch (e) {
+      return res.status(500).json({ message: 'Failed to read resume PDF.' });
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+    const prompt = `
+      Act as an expert ATS (Applicant Tracking System) and Hiring Manager.
+      
+      Compare this Candidate Resume:
+      "${resumeText.substring(0, 10000)}"
+
+      To this Job Description:
+      "${job.jobDescription.substring(0, 10000)}"
+
+      Provide a structured analysis in Markdown format:
+      
+      1. **Match Score:** Give a score out of 100 based on keyword and skill matching.
+      2. **Missing Keywords:** List the top 5 hard skills/keywords found in the JD that are missing from the resume.
+      3. **Tailoring Advice:** Give 3 specific bullet points on how to rewrite the resume to rank higher for this specific job.
+      
+      Keep it concise and actionable.
+    `;
+
+    const result = await model.generateContent(prompt);
+    const analysis = result.response.text();
+
+    res.json({ analysis });
+
+  } catch (error) {
+    console.error('AI Analyze Error:', error);
+    res.status(500).json({ message: 'Failed to analyze resume' });
+  }
+};

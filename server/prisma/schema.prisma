@@ -33,6 +33,7 @@ model Job {
   notes         String?
   resumeUrl     String?  
   resumeName    String?
+  jobDescription String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

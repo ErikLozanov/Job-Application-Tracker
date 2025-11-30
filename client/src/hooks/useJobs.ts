@@ -11,6 +11,7 @@ import {
     type JobFilters,
     generateCoverLetter,
     generateInterviewQuestions,
+    analyzeResume,
 } from "../api/jobs";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -102,6 +103,15 @@ export const useGenerateInterviewQuestions = () => {
     onError: (error) => {
       console.error("AI Error:", error);
       alert("Failed to generate interview prep.");
+    }
+  });
+};
+
+export const useAnalyzeResume = () => {
+  return useMutation({
+    mutationFn: (jobId: string) => analyzeResume(jobId),
+    onError: (error: any) => {
+      alert(error.response?.data?.message || "Analysis failed");
     }
   });
 };

@@ -63,6 +63,7 @@ export const createJob = async (req, res) => {
     priority,
     appliedDate,
     notes,
+    jobDescription,
   } = req.body;
 
   let resumeUrl = null;
@@ -102,6 +103,7 @@ export const createJob = async (req, res) => {
         priority,
         appliedDate: appliedDate ? new Date(appliedDate) : null,
         notes,
+        jobDescription,
         resumeUrl, 
         resumeName, 
         userId: req.user.id,
@@ -125,6 +127,7 @@ export const updateJob = async (req, res) => {
     appliedDate,
     interviewDate,
     notes,
+    jobDescription,
   } = req.body;
 
   let updateData = {
@@ -136,6 +139,7 @@ export const updateJob = async (req, res) => {
     appliedDate: appliedDate ? new Date(appliedDate) : null,
     interviewDate: interviewDate ? new Date(interviewDate) : null,
     notes,
+    jobDescription,
   };
 
   if (req.file) {

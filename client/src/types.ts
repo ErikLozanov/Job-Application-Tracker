@@ -1,3 +1,4 @@
+
 export interface User {
     _id: string;
     id: number;
@@ -11,6 +12,7 @@ export interface AuthError {
 }
 
 export interface Job {
+    jobDescription: string;
     interviewDate: any;
     resumeName?: string;
     resumeUrl?: any;
