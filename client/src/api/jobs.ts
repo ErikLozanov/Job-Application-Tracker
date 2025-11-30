@@ -40,17 +40,35 @@ export const getJobStats = async () => {
     return data;
 };
 
-export const createJob = async (jobData: CreateJobData) => {
-    const { data } = await apiClient.post<Job>("/jobs", jobData);
-    return data;
+export const createJob = async (jobData: FormData) => {
+  const { data } = await apiClient.post<Job>('/jobs', jobData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return data;
 };
 
-export const updateJob = async (id: string, jobData: UpdateJobData) => {
-    const { data } = await apiClient.put<Job>(`/jobs/${id}`, jobData);
-    return data;
+export const updateJob = async (id: string, jobData: FormData) => {
+  const { data } = await apiClient.put<Job>(`/jobs/${id}`, jobData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return data;
 };
 
 export const deleteJob = async (id: string) => {
     const { data } = await apiClient.delete<{ message: string }>(`/jobs/${id}`);
     return data;
+};
+
+export const generateCoverLetter = async (jobId: string) => {
+  const { data } = await apiClient.post<{ coverLetter: string }>('/ai/cover-letter', { jobId });
+  return data;
+};
+
+export const generateInterviewQuestions = async (jobId: string) => {
+  const { data } = await apiClient.post<{ interviewPrep: string }>('/ai/interview-questions', { jobId });
+  return data;
 };

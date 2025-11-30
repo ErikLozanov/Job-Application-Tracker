@@ -17,8 +17,6 @@ model User {
   password  String
   createdAt DateTime @default(now())
 
-  // This creates the relationship:
-  // A User can have many Jobs
   jobs      Job[]
 }
 
@@ -27,21 +25,21 @@ model Job {
   id            Int       @id @default(autoincrement())
   company       String
   jobTitle      String
-  jobUrl        String? // ? makes it optional
+  jobUrl        String? 
   status        JobStatus @default(APPLIED)
   priority      Priority  @default(MEDIUM)
   appliedDate   DateTime?
   interviewDate DateTime?
   notes         String?
+  resumeUrl     String?  
+  resumeName    String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  // This creates the relationship:
-  // This Job belongs to one User
   user   User @relation(fields: [userId], references: [id])
-  userId Int  // This is the foreign key
+  userId Int  
 
-  @@index([userId]) // Adds an index to userId for faster lookups
+  @@index([userId])
 }
 
 // Enums for dropdowns

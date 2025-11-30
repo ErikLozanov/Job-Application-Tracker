@@ -2,13 +2,15 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
     getJobStats,
     createJob,
-    type CreateJobData,
+    // type CreateJobData,
     getAllJobs,
     getJob,
     updateJob,
-    type UpdateJobData,
+    // type UpdateJobData,
     deleteJob,
     type JobFilters,
+    generateCoverLetter,
+    generateInterviewQuestions,
 } from "../api/jobs";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -25,7 +27,7 @@ export const useCreateJob = () => {
     const navigate = useNavigate();
 
     return useMutation({
-        mutationFn: (data: CreateJobData) => createJob(data),
+        mutationFn: (data: any) => createJob(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["jobStats"] });
 
@@ -58,18 +60,15 @@ export const useJob = (id: string) => {
 };
 
 export const useUpdateJob = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: ({ id, data }: { id: string; data: UpdateJobData }) =>
-            updateJob(id, data),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({
-                queryKey: ["job", data.id.toString()],
-            });
-            queryClient.invalidateQueries({ queryKey: ["jobs"] });
-            queryClient.invalidateQueries({ queryKey: ["jobStats"] });
-        },
-    });
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: FormData }) => updateJob(id, data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['job', data.id.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['jobStats'] });
+    },
+  });
 };
 
 export const useDeleteJob = () => {
@@ -87,3 +86,22 @@ export const useDeleteJob = () => {
     });
 };
 
+export const useGenerateCoverLetter = () => {
+  return useMutation({
+    mutationFn: (jobId: string) => generateCoverLetter(jobId),
+    onError: (error) => {
+      console.error("AI Error:", error);
+      alert("Failed to generate cover letter. Check your console.");
+    }
+  });
+};
+
+export const useGenerateInterviewQuestions = () => {
+  return useMutation({
+    mutationFn: (jobId: string) => generateInterviewQuestions(jobId),
+    onError: (error) => {
+      console.error("AI Error:", error);
+      alert("Failed to generate interview prep.");
+    }
+  });
+};

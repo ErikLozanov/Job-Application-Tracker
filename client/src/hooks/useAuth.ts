@@ -1,7 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { registerUser, loginUser } from '../api/auth';
-import type { AuthError } from '../types';
+import { registerUser, loginUser, updateProfile, deleteAccount, getUser } from '../api/auth';
 import axios from 'axios';
 
 export const useRegister = () => {
@@ -10,17 +9,12 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
-      // 1. Save the token to localStorage
-      localStorage.setItem('token', data.token);
-      
-      // 2. Ideally, save the user info to a global Context or Store (we'll skip this for MVP)
-      console.log('Registered successfully:', data);
 
-      // 3. Redirect to the Dashboard
-      navigate('/');
+      localStorage.setItem('token', data.token);
+
+      navigate('/dashboard');
     },
     onError: (error) => {
-      // This helps debug connection issues
       if (axios.isAxiosError(error)) {
         console.error("Axios Error:", error.response?.data?.message || error.message);
       } else {
@@ -37,17 +31,48 @@ export const useLogin = () => {
     mutationFn: loginUser,
     onSuccess: (data) => {
       localStorage.setItem('token', data.token);
-      
-      // 2. Log success
-      console.log('Login successful, token saved!');
 
-      // 3. Redirect to Dashboard
-      navigate('/');
+      navigate('/dashboard');
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
         console.error("Login Error:", error.response?.data?.message || error.message);
       }
     },
+  });
+};
+
+export const useUpdateProfile = () => {
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: updateProfile,
+    onSuccess: () => {
+      localStorage.removeItem('token');
+      
+      alert('Password updated successfully! Please log in again.');
+      
+      navigate('/login');
+    },
+  });
+};
+
+export const useDeleteAccount = () => {
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: deleteAccount,
+    onSuccess: () => {
+      localStorage.removeItem('token');
+      navigate('/');
+      alert('Your account has been deleted.');
+    },
+  });
+};
+
+export const useUser = () => {
+  return useQuery({
+    queryKey: ['user'],
+    queryFn: getUser,
+    retry: false,
   });
 };

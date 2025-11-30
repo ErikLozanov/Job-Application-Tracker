@@ -11,6 +11,9 @@ export interface AuthError {
 }
 
 export interface Job {
+    interviewDate: any;
+    resumeName?: string;
+    resumeUrl?: any;
     id: number;
     company: string;
     jobTitle: string;

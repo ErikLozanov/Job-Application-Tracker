@@ -1,8 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import authRoutes from './routes/authRoutes.js'; 
-import jobRoutes from './routes/jobRoutes.js';
+import routes from './routes/index.js'; 
 
 dotenv.config();
 
@@ -11,15 +10,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-app.use('/api/auth', authRoutes); 
-app.use('/api/jobs', jobRoutes);
+app.use('/api', routes); 
 
-// Error Handling
 app.use((req, res, next) => {
   const error = new Error(`Not Found - ${req.originalUrl}`);
   res.status(404);
