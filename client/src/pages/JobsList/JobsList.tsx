@@ -46,7 +46,7 @@ const JobsList = () => {
   );
 
   return (
-    <div className="space-y-8">
+<div className="space-y-8">
       
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -57,19 +57,36 @@ const JobsList = () => {
             Manage your pipeline and track your progress.
           </p>
         </div>
-        <Link
-          to="/jobs/new"
-          className="
-            inline-flex items-center justify-center px-5 py-2.5 
-            text-sm font-bold text-white transition-all duration-200 
-            bg-gradient-to-r from-blue-600 to-indigo-600 
-            rounded-full shadow-lg shadow-blue-500/30 
-            hover:from-blue-700 hover:to-indigo-700 
-            hover:shadow-blue-500/50 hover:-translate-y-0.5
-          "
-        >
-          + Add Job
-        </Link>
+
+        <div className="flex items-center gap-3">
+          
+          <Link
+            to="/board"
+            className="
+              inline-flex items-center justify-center px-4 py-2.5 
+              text-sm font-medium text-gray-700 dark:text-slate-200 
+              bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 
+              rounded-full hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors
+            "
+          >
+            <svg className="w-4 h-4 mr-2 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"></path></svg>
+            Board View
+          </Link>
+
+          <Link
+            to="/jobs/new"
+            className="
+              inline-flex items-center justify-center px-5 py-2.5 
+              text-sm font-bold text-white transition-all duration-200 
+              bg-gradient-to-r from-blue-600 to-indigo-600 
+              rounded-full shadow-lg shadow-blue-500/30 
+              hover:from-blue-700 hover:to-indigo-700 
+              hover:shadow-blue-500/50 hover:-translate-y-0.5
+            "
+          >
+            + Add Job
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-1 rounded-2xl shadow-sm border border-gray-200/60 dark:border-slate-700/50">
