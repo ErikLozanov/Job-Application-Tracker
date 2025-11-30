@@ -60,16 +60,16 @@ const JobsList = () => {
 
         <div className="flex items-center gap-3">
           
-          <Link
+           <Link
             to="/board"
             className="
-              inline-flex items-center justify-center px-4 py-2.5 
+              hidden md:inline-flex items-center justify-center px-4 py-2.5 
               text-sm font-medium text-gray-700 dark:text-slate-200 
               bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 
               rounded-full hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors
             "
           >
-            <svg className="w-4 h-4 mr-2 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"></path></svg>
+            <svg className="w-4 h-4 mr-2 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"></path></svg>
             Board View
           </Link>
 

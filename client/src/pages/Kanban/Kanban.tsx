@@ -1,17 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useJobs, useUpdateJob } from '../../hooks/useJobs';
-import { DndContext, type DragEndEvent, DragOverlay, type DragStartEvent, useDraggable, useDroppable } from '@dnd-kit/core';
+import { 
+  DndContext, 
+  type DragEndEvent, 
+  DragOverlay, 
+  type DragStartEvent, 
+  useDraggable, 
+  useDroppable,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  TouchSensor
+} from '@dnd-kit/core';
 import type { Job } from '../../types';
 import { Link } from 'react-router-dom';
 
 const JobCard = ({ job, isOverlay }: { job: Job; isOverlay?: boolean }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: job.id.toString(),
-    data: { job }, 
+    data: { job },
   });
 
   const style = transform ? {
-    transform: `translate3d(${transform.x}js, ${transform.y}js, 0)`,
+    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
   } : undefined;
 
   return (
@@ -22,8 +33,8 @@ const JobCard = ({ job, isOverlay }: { job: Job; isOverlay?: boolean }) => {
       {...attributes}
       className={`
         bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 
-        hover:shadow-md cursor-grab active:cursor-grabbing group relative
-        ${isOverlay ? 'rotate-3 scale-105 shadow-xl ring-2 ring-blue-500 z-50' : ''}
+        hover:shadow-md cursor-grab active:cursor-grabbing group relative transition-all
+        ${isOverlay ? 'rotate-3 scale-105 shadow-xl ring-2 ring-blue-500 z-50 opacity-90' : ''}
       `}
     >
       <div className="flex justify-between items-start mb-2">
@@ -44,7 +55,13 @@ const JobCard = ({ job, isOverlay }: { job: Job; isOverlay?: boolean }) => {
         <span className="text-[10px] text-gray-400">
           {new Date(job.updatedAt || job.appliedDate || Date.now()).toLocaleDateString(undefined, {month:'short', day:'numeric'})}
         </span>
-        <Link to={`/jobs/${job.id}`} className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-bold text-blue-600 hover:underline">
+        
+
+        <Link 
+          to={`/jobs/${job.id}`} 
+          className="text-[10px] font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline px-2 py-1"
+          onPointerDown={(e) => e.stopPropagation()} 
+        >
           View
         </Link>
       </div>
@@ -82,6 +99,20 @@ const Kanban = () => {
   const { mutate: updateJob } = useUpdateJob();
   const [activeJob, setActiveJob] = useState<Job | null>(null);
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5, 
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    })
+  );
+
   const handleDragStart = (event: DragStartEvent) => {
     const job = event.active.data.current?.job as Job;
     setActiveJob(job);
@@ -96,10 +127,8 @@ const Kanban = () => {
     const newStatus = over.id as string;
     
     if (activeJob && activeJob.status !== newStatus) {
-      
       const formData = new FormData();
       formData.append('status', newStatus);
-      
       updateJob({ id: jobId, data: formData });
     }
     
@@ -119,7 +148,7 @@ const Kanban = () => {
         </Link>
       </div>
 
-      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex gap-6 min-w-full">
           <Column status="APPLIED" title="Applied" count={getJobsByStatus('APPLIED').length}>
             {getJobsByStatus('APPLIED').map((job) => <JobCard key={job.id} job={job} />)}
